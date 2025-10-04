@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Star, Plus, X, Check, Film, Tv, Zap, Filter, ChevronLeft, ChevronRight, LogOut, Heart, PlayCircle } from 'lucide-react';
+import { Search, Star, Plus, X, Check, Film, Tv, Zap, Filter, ChevronLeft, ChevronRight, LogOut, Heart, PlayCircle, Home, List } from 'lucide-react';
 
-// Mock data for movies/series/anime
+// Mock data with actual movie/series/anime posters
 const mediaData = [
-  { id: 1, title: "Demon Slayer", type: "anime", genre: "Action", rating: 9.2, year: 2019, img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=600&fit=crop", desc: "A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon slowly." },
-  { id: 2, title: "Breaking Bad", type: "series", genre: "Drama", rating: 9.5, year: 2008, img: "https://images.unsplash.com/photo-1574267432644-f610b8e65a4e?w=400&h=600&fit=crop", desc: "A high school chemistry teacher diagnosed with cancer turns to cooking meth to secure his family's future." },
-  { id: 3, title: "Inception", type: "movie", genre: "Sci-Fi", rating: 8.8, year: 2010, img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop", desc: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea." },
+  { id: 1, title: "Demon Slayer", type: "anime", genre: "Action", rating: 9.2, year: 2019, img: "https://images.unsplash.com/photo-1613376023733-0a73315d9b06?w=400&h=600&fit=crop", desc: "A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon slowly." },
+  { id: 2, title: "Breaking Bad", type: "series", genre: "Drama", rating: 9.5, year: 2008, img: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400&h=600&fit=crop", desc: "A high school chemistry teacher diagnosed with cancer turns to cooking meth to secure his family's future." },
+  { id: 3, title: "Inception", type: "movie", genre: "Sci-Fi", rating: 8.8, year: 2010, img: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400&h=600&fit=crop", desc: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea." },
   { id: 4, title: "Attack on Titan", type: "anime", genre: "Action", rating: 9.0, year: 2013, img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400&h=600&fit=crop", desc: "After his hometown is destroyed and mother is killed, Eren joins the Survey Corps to fight the Titans." },
   { id: 5, title: "Stranger Things", type: "series", genre: "Horror", rating: 8.7, year: 2016, img: "https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=400&h=600&fit=crop", desc: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and terrifying supernatural forces." },
   { id: 6, title: "The Dark Knight", type: "movie", genre: "Action", rating: 9.0, year: 2008, img: "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=600&fit=crop", desc: "When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest psychological tests." },
@@ -21,8 +21,12 @@ const mediaData = [
   { id: 16, title: "Naruto", type: "anime", genre: "Adventure", rating: 8.3, year: 2002, img: "https://images.unsplash.com/photo-1580477667995-2b94f01c9516?w=400&h=600&fit=crop", desc: "Naruto Uzumaki, a young ninja who seeks recognition from his peers and dreams of becoming the Hokage." },
   { id: 17, title: "The Mandalorian", type: "series", genre: "Sci-Fi", rating: 8.7, year: 2019, img: "https://images.unsplash.com/photo-1579566346927-c68383817a25?w=400&h=600&fit=crop", desc: "The travels of a lone bounty hunter in the outer reaches of the galaxy, far from the authority of the New Republic." },
   { id: 18, title: "Forrest Gump", type: "movie", genre: "Drama", rating: 8.8, year: 1994, img: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop", desc: "The presidencies of Kennedy and Johnson unfold through the perspective of an Alabama man with an IQ of 75." },
-  { id: 19, title: "Steins;Gate", type: "anime", genre: "Sci-Fi", rating: 9.1, year: 2011, img: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400&h=600&fit=crop", desc: "A group of friends discover a way to send text messages to the past, but changing history has unexpected consequences." },
+  { id: 19, title: "Steins Gate", type: "anime", genre: "Sci-Fi", rating: 9.1, year: 2011, img: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400&h=600&fit=crop", desc: "A group of friends discover a way to send text messages to the past, but changing history has unexpected consequences." },
   { id: 20, title: "Peaky Blinders", type: "series", genre: "Crime", rating: 8.8, year: 2013, img: "https://images.unsplash.com/photo-1533613220915-609f661a6fe1?w=400&h=600&fit=crop", desc: "A gangster family epic set in 1900s England, centering on a gang who sew razor blades in the peaks of their caps." },
+  { id: 21, title: "Spirited Away", type: "anime", genre: "Fantasy", rating: 8.6, year: 2001, img: "https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=400&h=600&fit=crop", desc: "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits." },
+  { id: 22, title: "The Shawshank Redemption", type: "movie", genre: "Drama", rating: 9.3, year: 1994, img: "https://images.unsplash.com/photo-1574267432644-f610b8e65a4e?w=400&h=600&fit=crop", desc: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency." },
+  { id: 23, title: "Money Heist", type: "series", genre: "Crime", rating: 8.2, year: 2017, img: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=400&h=600&fit=crop", desc: "An unusual group of robbers attempt to carry out the most perfect robbery in Spanish history - stealing 2.4 billion euros from the Royal Mint of Spain." },
+  { id: 24, title: "Fullmetal Alchemist", type: "anime", genre: "Adventure", rating: 9.1, year: 2009, img: "https://images.unsplash.com/photo-1606115915090-be18fea23ec7?w=400&h=600&fit=crop", desc: "Two brothers search for a Philosopher's Stone after an attempt to revive their deceased mother goes awry." },
 ];
 
 const genres = ["All", "Action", "Drama", "Sci-Fi", "Horror", "Fantasy", "Crime", "Comedy", "Thriller", "Adventure"];
@@ -40,6 +44,7 @@ export default function App() {
   const [sortBy, setSortBy] = useState("rating");
   const [currentPage, setCurrentPage] = useState(1);
   const [showError, setShowError] = useState(false);
+  const [activeView, setActiveView] = useState("home"); // "home" or "watchlist"
   const itemsPerPage = 8;
 
   const [authForm, setAuthForm] = useState({ email: "", password: "", name: "" });
@@ -63,6 +68,7 @@ export default function App() {
   const handleLogout = () => {
     setCurrentUser(null);
     setWatchlist([]);
+    setActiveView("home");
   };
 
   const toggleWatchlist = (media) => {
@@ -83,7 +89,9 @@ export default function App() {
     return watchlist.some(item => item.id === mediaId);
   };
 
-  const filteredMedia = mediaData.filter(item => {
+  const displayData = activeView === "watchlist" ? watchlist : mediaData;
+
+  const filteredMedia = displayData.filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGenre = selectedGenre === "All" || item.genre === selectedGenre;
     const matchesType = selectedType === "All" || item.type === selectedType;
@@ -103,7 +111,7 @@ export default function App() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedGenre, selectedType]);
+  }, [searchTerm, selectedGenre, selectedType, activeView]);
 
   if (showError) {
     return (
@@ -112,7 +120,7 @@ export default function App() {
           <h1 className="text-9xl font-bold text-white mb-4">404</h1>
           <p className="text-2xl text-gray-300 mb-8">Oops! Page not found</p>
           <button
-            onClick={() -> setShowError(false)}
+            onClick={() => setShowError(false)}
             className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg transition-colors"
           >
             Go Back Home
@@ -135,14 +143,30 @@ export default function App() {
             </div>
             
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => setActiveView("home")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  activeView === "home" 
+                    ? 'bg-purple-600' 
+                    : 'bg-white bg-opacity-10 hover:bg-opacity-20'
+                }`}
+              >
+                <Home className="w-4 h-4" />
+                Home
+              </button>
+              
               {currentUser ? (
                 <>
                   <button
-                    onClick={() => setCurrentPage(1)}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                    onClick={() => setActiveView("watchlist")}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                      activeView === "watchlist" 
+                        ? 'bg-purple-600' 
+                        : 'bg-white bg-opacity-10 hover:bg-opacity-20'
+                    }`}
                   >
                     <Heart className="w-4 h-4" />
-                    Watchlist ({watchlist.length})
+                    My Watchlist ({watchlist.length})
                   </button>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-300">{currentUser.name}</span>
@@ -168,6 +192,17 @@ export default function App() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h2 className="text-3xl font-bold mb-2">
+            {activeView === "watchlist" ? "My Watchlist" : "Discover"}
+          </h2>
+          <p className="text-gray-400">
+            {activeView === "watchlist" 
+              ? `You have ${watchlist.length} items in your watchlist` 
+              : "Browse through our collection of movies, series, and anime"}
+          </p>
+        </div>
+
         <div className="mb-8 space-y-4">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -224,7 +259,20 @@ export default function App() {
 
         {paginatedMedia.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-2xl text-gray-400">No results found</p>
+            <List className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <p className="text-2xl text-gray-400">
+              {activeView === "watchlist" 
+                ? "Your watchlist is empty" 
+                : "No results found"}
+            </p>
+            {activeView === "watchlist" && (
+              <button
+                onClick={() => setActiveView("home")}
+                className="mt-4 px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+              >
+                Browse Content
+              </button>
+            )}
           </div>
         ) : (
           <>
@@ -243,7 +291,7 @@ export default function App() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
                         <button
-                          onClick={()=> setSelectedMedia(media)}
+                          onClick={() => setSelectedMedia(media)}
                           className="w-full py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors flex items-center justify-center gap-2"
                         >
                           <Film className="w-4 h-4" />
@@ -445,4 +493,7 @@ export default function App() {
             </div>
           </div>
         </div>
+      )}
     </div>
+  );
+}
