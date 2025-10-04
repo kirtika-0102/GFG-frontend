@@ -1,0 +1,448 @@
+import React, { useState, useEffect } from 'react';
+import { Search, Star, Plus, X, Check, Film, Tv, Zap, Filter, ChevronLeft, ChevronRight, LogOut, Heart, PlayCircle } from 'lucide-react';
+
+// Mock data for movies/series/anime
+const mediaData = [
+  { id: 1, title: "Demon Slayer", type: "anime", genre: "Action", rating: 9.2, year: 2019, img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=600&fit=crop", desc: "A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon slowly." },
+  { id: 2, title: "Breaking Bad", type: "series", genre: "Drama", rating: 9.5, year: 2008, img: "https://images.unsplash.com/photo-1574267432644-f610b8e65a4e?w=400&h=600&fit=crop", desc: "A high school chemistry teacher diagnosed with cancer turns to cooking meth to secure his family's future." },
+  { id: 3, title: "Inception", type: "movie", genre: "Sci-Fi", rating: 8.8, year: 2010, img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop", desc: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea." },
+  { id: 4, title: "Attack on Titan", type: "anime", genre: "Action", rating: 9.0, year: 2013, img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400&h=600&fit=crop", desc: "After his hometown is destroyed and mother is killed, Eren joins the Survey Corps to fight the Titans." },
+  { id: 5, title: "Stranger Things", type: "series", genre: "Horror", rating: 8.7, year: 2016, img: "https://images.unsplash.com/photo-1594908900066-3f47337549d8?w=400&h=600&fit=crop", desc: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments and terrifying supernatural forces." },
+  { id: 6, title: "The Dark Knight", type: "movie", genre: "Action", rating: 9.0, year: 2008, img: "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400&h=600&fit=crop", desc: "When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest psychological tests." },
+  { id: 7, title: "Death Note", type: "anime", genre: "Thriller", rating: 9.0, year: 2006, img: "https://images.unsplash.com/photo-1618945524163-32451704627e?w=400&h=600&fit=crop", desc: "A high school student discovers a supernatural notebook that grants the power to kill anyone whose name is written in it." },
+  { id: 8, title: "Game of Thrones", type: "series", genre: "Fantasy", rating: 9.3, year: 2011, img: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=400&h=600&fit=crop", desc: "Nine noble families fight for control over the lands of Westeros, while an ancient enemy returns." },
+  { id: 9, title: "Interstellar", type: "movie", genre: "Sci-Fi", rating: 8.6, year: 2014, img: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=600&fit=crop", desc: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival." },
+  { id: 10, title: "One Punch Man", type: "anime", genre: "Comedy", rating: 8.7, year: 2015, img: "https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=400&h=600&fit=crop", desc: "A superhero who can defeat any opponent with a single punch seeks to find a worthy opponent." },
+  { id: 11, title: "The Witcher", type: "series", genre: "Fantasy", rating: 8.2, year: 2019, img: "https://images.unsplash.com/photo-1595769816263-9b910be24d5f?w=400&h=600&fit=crop", desc: "Geralt of Rivia, a solitary monster hunter, struggles to find his place in a world where people prove more wicked than beasts." },
+  { id: 12, title: "Pulp Fiction", type: "movie", genre: "Crime", rating: 8.9, year: 1994, img: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400&h=600&fit=crop", desc: "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption." },
+  { id: 13, title: "My Hero Academia", type: "anime", genre: "Action", rating: 8.4, year: 2016, img: "https://images.unsplash.com/photo-1601814933824-fd0b574dd592?w=400&h=600&fit=crop", desc: "A superhero-admiring boy enrolls in a prestigious hero academy and learns what it takes to be a hero." },
+  { id: 14, title: "The Crown", type: "series", genre: "Drama", rating: 8.6, year: 2016, img: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=600&fit=crop", desc: "Follows the political rivalries and romance of Queen Elizabeth II's reign and the events that shaped the second half of the 20th century." },
+  { id: 15, title: "The Matrix", type: "movie", genre: "Sci-Fi", rating: 8.7, year: 1999, img: "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?w=400&h=600&fit=crop", desc: "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers." },
+  { id: 16, title: "Naruto", type: "anime", genre: "Adventure", rating: 8.3, year: 2002, img: "https://images.unsplash.com/photo-1580477667995-2b94f01c9516?w=400&h=600&fit=crop", desc: "Naruto Uzumaki, a young ninja who seeks recognition from his peers and dreams of becoming the Hokage." },
+  { id: 17, title: "The Mandalorian", type: "series", genre: "Sci-Fi", rating: 8.7, year: 2019, img: "https://images.unsplash.com/photo-1579566346927-c68383817a25?w=400&h=600&fit=crop", desc: "The travels of a lone bounty hunter in the outer reaches of the galaxy, far from the authority of the New Republic." },
+  { id: 18, title: "Forrest Gump", type: "movie", genre: "Drama", rating: 8.8, year: 1994, img: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop", desc: "The presidencies of Kennedy and Johnson unfold through the perspective of an Alabama man with an IQ of 75." },
+  { id: 19, title: "Steins;Gate", type: "anime", genre: "Sci-Fi", rating: 9.1, year: 2011, img: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=400&h=600&fit=crop", desc: "A group of friends discover a way to send text messages to the past, but changing history has unexpected consequences." },
+  { id: 20, title: "Peaky Blinders", type: "series", genre: "Crime", rating: 8.8, year: 2013, img: "https://images.unsplash.com/photo-1533613220915-609f661a6fe1?w=400&h=600&fit=crop", desc: "A gangster family epic set in 1900s England, centering on a gang who sew razor blades in the peaks of their caps." },
+];
+
+const genres = ["All", "Action", "Drama", "Sci-Fi", "Horror", "Fantasy", "Crime", "Comedy", "Thriller", "Adventure"];
+const types = ["All", "movie", "series", "anime"];
+
+export default function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [watchlist, setWatchlist] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("All");
+  const [selectedType, setSelectedType] = useState("All");
+  const [sortBy, setSortBy] = useState("rating");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showError, setShowError] = useState(false);
+  const itemsPerPage = 8;
+
+  const [authForm, setAuthForm] = useState({ email: "", password: "", name: "" });
+
+  const handleAuth = (e) => {
+    e.preventDefault();
+    if (isSignUp) {
+      const newUser = { ...authForm, watchlist: [] };
+      setCurrentUser(newUser);
+      setWatchlist([]);
+      setShowAuthModal(false);
+      setAuthForm({ email: "", password: "", name: "" });
+    } else {
+      setCurrentUser({ email: authForm.email, name: authForm.name || "User", watchlist: [] });
+      setWatchlist([]);
+      setShowAuthModal(false);
+      setAuthForm({ email: "", password: "", name: "" });
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setWatchlist([]);
+  };
+
+  const toggleWatchlist = (media) => {
+    if (!currentUser) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    const isInWatchlist = watchlist.some(item => item.id === media.id);
+    if (isInWatchlist) {
+      setWatchlist(watchlist.filter(item => item.id !== media.id));
+    } else {
+      setWatchlist([...watchlist, media]);
+    }
+  };
+
+  const isInWatchlist = (mediaId) => {
+    return watchlist.some(item => item.id === mediaId);
+  };
+
+  const filteredMedia = mediaData.filter(item => {
+    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesGenre = selectedGenre === "All" || item.genre === selectedGenre;
+    const matchesType = selectedType === "All" || item.type === selectedType;
+    return matchesSearch && matchesGenre && matchesType;
+  });
+
+  const sortedMedia = [...filteredMedia].sort((a, b) => {
+    if (sortBy === "rating") return b.rating - a.rating;
+    if (sortBy === "year") return b.year - a.year;
+    if (sortBy === "title") return a.title.localeCompare(b.title);
+    return 0;
+  });
+
+  const totalPages = Math.ceil(sortedMedia.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedMedia = sortedMedia.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedGenre, selectedType]);
+
+  if (showError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-black flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-9xl font-bold text-white mb-4">404</h1>
+          <p className="text-2xl text-gray-300 mb-8">Oops! Page not found</p>
+          <button
+            onClick={() -> setShowError(false)}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg transition-colors"
+          >
+            Go Back Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black text-white">
+      <header className="bg-black bg-opacity-50 backdrop-blur-md sticky top-0 z-50 border-b border-purple-500">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <PlayCircle className="w-8 h-8 text-purple-500" />
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                StreamVerse
+              </h1>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {currentUser ? (
+                <>
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                  >
+                    <Heart className="w-4 h-4" />
+                    Watchlist ({watchlist.length})
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-300">{currentUser.name}</span>
+                    <button
+                      onClick={handleLogout}
+                      className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors"
+                    >
+                      <LogOut className="w-5 h-5" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-8 space-y-4">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search movies, series, anime..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white bg-opacity-10 backdrop-blur-md border border-purple-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm text-gray-300 mb-2">Type</label>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="w-full px-4 py-2 bg-white bg-opacity-10 border border-purple-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                {types.map(type => (
+                  <option key={type} value={type} className="bg-gray-900">{type.charAt(0).toUpperCase() + type.slice(1)}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm text-gray-300 mb-2">Genre</label>
+              <select
+                value={selectedGenre}
+                onChange={(e) => setSelectedGenre(e.target.value)}
+                className="w-full px-4 py-2 bg-white bg-opacity-10 border border-purple-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                {genres.map(genre => (
+                  <option key={genre} value={genre} className="bg-gray-900">{genre}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm text-gray-300 mb-2">Sort By</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full px-4 py-2 bg-white bg-opacity-10 border border-purple-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="rating" className="bg-gray-900">Rating</option>
+                <option value="year" className="bg-gray-900">Year</option>
+                <option value="title" className="bg-gray-900">Title</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {paginatedMedia.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-2xl text-gray-400">No results found</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {paginatedMedia.map(media => (
+                <div
+                  key={media.id}
+                  className="group relative bg-white bg-opacity-5 backdrop-blur-md rounded-lg overflow-hidden border border-purple-500 border-opacity-30 hover:border-opacity-100 transition-all duration-300 hover:transform hover:scale-105"
+                >
+                  <div className="relative aspect-[2/3] overflow-hidden">
+                    <img
+                      src={media.img}
+                      alt={media.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+                        <button
+                          onClick={()=> setSelectedMedia(media)}
+                          className="w-full py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Film className="w-4 h-4" />
+                          Details
+                        </button>
+                        <button
+                          onClick={() => toggleWatchlist(media)}
+                          className={`w-full py-2 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                            isInWatchlist(media.id)
+                              ? 'bg-green-600 hover:bg-green-700'
+                              : 'bg-white bg-opacity-20 hover:bg-opacity-30'
+                          }`}
+                        >
+                          {isInWatchlist(media.id) ? (
+                            <>
+                              <Check className="w-4 h-4" />
+                              In Watchlist
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4" />
+                              Add to Watchlist
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="px-2 py-1 text-xs bg-purple-600 rounded">{media.type}</span>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                        <span className="text-sm font-semibold">{media.rating}</span>
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-lg mb-1 truncate">{media.title}</h3>
+                    <div className="flex items-center justify-between text-sm text-gray-400">
+                      <span>{media.genre}</span>
+                      <span>{media.year}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 bg-white bg-opacity-10 rounded-lg hover:bg-opacity-20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                
+                <div className="flex gap-2">
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`w-10 h-10 rounded-lg transition-colors ${
+                        currentPage === i + 1
+                          ? 'bg-purple-600'
+                          : 'bg-white bg-opacity-10 hover:bg-opacity-20'
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 bg-white bg-opacity-10 rounded-lg hover:bg-opacity-20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+          <div className="bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg p-8 max-w-md w-full relative">
+            <button
+              onClick={() => setShowAuthModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <h2 className="text-2xl font-bold mb-6">{isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+            
+            <div className="space-y-4">
+              {isSignUp && (
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={authForm.name}
+                  onChange={(e) => setAuthForm({ ...authForm, name: e.target.value })}
+                  className="w-full px-4 py-3 bg-white bg-opacity-10 border border-purple-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              )}
+              <input
+                type="email"
+                placeholder="Email"
+                value={authForm.email}
+                onChange={(e) => setAuthForm({ ...authForm, email: e.target.value })}
+                className="w-full px-4 py-3 bg-white bg-opacity-10 border border-purple-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={authForm.password}
+                onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
+                className="w-full px-4 py-3 bg-white bg-opacity-10 border border-purple-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <button
+                onClick={handleAuth}
+                className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors font-semibold"
+              >
+                {isSignUp ? 'Sign Up' : 'Sign In'}
+              </button>
+            </div>
+            
+            <button
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="w-full mt-4 text-sm text-gray-300 hover:text-white transition-colors"
+            >
+              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {selectedMedia && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg max-w-4xl w-full relative my-8">
+            <button
+              onClick={() => setSelectedMedia(null)}
+              className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-lg transition-colors z-10"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="grid md:grid-cols-2 gap-6 p-8">
+              <div>
+                <img
+                  src={selectedMedia.img}
+                  alt={selectedMedia.title}
+                  className="w-full rounded-lg shadow-2xl"
+                />
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-3xl font-bold mb-2">{selectedMedia.title}</h2>
+                  <div className="flex items-center gap-4 text-sm text-gray-300">
+                    <span className="px-3 py-1 bg-purple-600 rounded-full">{selectedMedia.type}</span>
+                    <span>{selectedMedia.year}</span>
+                    <span>{selectedMedia.genre}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+                  <span className="text-2xl font-bold">{selectedMedia.rating}</span>
+                  <span className="text-gray-400">/10</span>
+                </div>
+                
+                <p className="text-gray-300 leading-relaxed">{selectedMedia.desc}</p>
+                
+                <button
+                  onClick={() => toggleWatchlist(selectedMedia)}
+                  className={`w-full py-3 rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold ${
+                    isInWatchlist(selectedMedia.id)
+                      ? 'bg-green-600 hover:bg-green-700'
+                      : 'bg-purple-600 hover:bg-purple-700'
+                  }`}
+                >
+                  {isInWatchlist(selectedMedia.id) ? (
+                    <>
+                      <Check className="w-5 h-5" />
+                      In Watchlist
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-5 h-5" />
+                      Add to Watchlist
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
